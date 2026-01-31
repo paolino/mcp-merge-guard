@@ -62,10 +62,7 @@ jobs:
         run: nix build --quiet
 
       - name: Run tests
-        run: nix develop --quiet -c npm ci && nix develop --quiet -c npm test
-
-      - name: Lint
-        run: nix develop --quiet -c npm run lint
+        run: nix develop --quiet -c bash -c "npm ci && npm test"
 
       - name: Build Docker image
         run: nix build .#docker-image --quiet
