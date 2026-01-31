@@ -104,7 +104,15 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           BRANCH="release/v${{ inputs.version }}"
-          echo "Waiting for CI checks to complete..."
+          echo "Waiting for CI checks to be registered..."
+          for i in {1..30}; do
+            if gh pr checks "$BRANCH" 2>/dev/null | grep -q "build-and-test"; then
+              echo "Checks registered, watching for completion..."
+              break
+            fi
+            echo "Waiting for checks... (attempt $i/30)"
+            sleep 10
+          done
           gh pr checks "$BRANCH" --watch
           echo "CI passed, merging PR..."
           gh pr merge "$BRANCH" --rebase --delete-branch
