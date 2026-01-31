@@ -45,8 +45,9 @@
           };
         };
 
-        unit-tests = pkgs.buildNpmPackage {
-          pname = "mcp-merge-guard-tests";
+        # Build artifact with test sources
+        testBuild = pkgs.buildNpmPackage {
+          pname = "mcp-merge-guard-test-build";
           inherit version;
           src = ./.;
           npmDepsHash = "sha256-uj3T4nBdxpau4bDm0yh44fOabc/jViz2dv7jbgETUdM=";
@@ -56,29 +57,27 @@
           '';
 
           installPhase = ''
-            mkdir -p $out/bin $out/lib
+            mkdir -p $out/lib
             cp -r src $out/lib/
             cp -r test $out/lib/
             cp -r node_modules $out/lib/
             cp package.json $out/lib/
             cp tsconfig.json $out/lib/
             cp vitest.config.ts $out/lib/
-
-            cat > $out/bin/unit-tests << EOF
-            #!/usr/bin/env bash
-            set -euo pipefail
-            WORK=\$(mktemp -d)
-            trap "rm -rf \$WORK" EXIT
-            cp -r $out/lib/* "\$WORK/"
-            chmod -R u+w "\$WORK"
-            cd "\$WORK"
-            exec ${pkgs.nodejs}/bin/npx vitest run "\$@"
-            EOF
-            chmod +x $out/bin/unit-tests
           '';
-
-          meta.mainProgram = "unit-tests";
         };
+
+        # Runnable test script
+        unit-tests = pkgs.writeShellScriptBin "unit-tests" ''
+          set -euo pipefail
+          WORK=$(mktemp -d)
+          trap "rm -rf $WORK" EXIT
+          cp -r ${testBuild}/lib/* "$WORK/"
+          chmod -R u+w "$WORK"
+          cd "$WORK"
+          exec ${pkgs.nodejs}/bin/npx vitest run "$@"
+        '';
+
       in {
         packages = {
           default = mcp-merge-guard;
