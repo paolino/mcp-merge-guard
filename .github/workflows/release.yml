@@ -61,7 +61,7 @@ jobs:
         run: nix build --quiet
 
       - name: Test
-        run: nix build .#unit-tests --quiet
+        run: nix run .#unit-tests --quiet
 
   release:
     runs-on: ubuntu-latest
