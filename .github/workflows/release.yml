@@ -15,7 +15,6 @@ on:
 
 permissions:
   contents: write
-  packages: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -64,9 +63,6 @@ jobs:
       - name: Run tests
         run: nix develop --quiet -c bash -c "npm ci && npm test"
 
-      - name: Build Docker image
-        run: nix build .#docker-image --quiet
-
   release:
     runs-on: ubuntu-latest
     needs: test
@@ -98,26 +94,6 @@ jobs:
           git tag "v${{ inputs.version }}"
           git push origin "v${{ inputs.version }}"
 
-      - name: Build Docker image
-        run: |
-          nix build .#docker-image
-          docker load < result
-
-      - name: Login to ghcr.io
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Push Docker image
-        run: |
-          VERSION="${{ inputs.version }}"
-          docker push "ghcr.io/paolino/mcp-merge-guard:$VERSION"
-          docker tag "ghcr.io/paolino/mcp-merge-guard:$VERSION" \
-            "ghcr.io/paolino/mcp-merge-guard:latest"
-          docker push "ghcr.io/paolino/mcp-merge-guard:latest"
-
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -138,6 +114,4 @@ jobs:
           echo "Would have:"
           echo "  - Updated package.json version to ${{ inputs.version }}"
           echo "  - Created tag v${{ inputs.version }}"
-          echo "  - Pushed ghcr.io/paolino/mcp-merge-guard:${{ inputs.version }}"
-          echo "  - Pushed ghcr.io/paolino/mcp-merge-guard:latest"
           echo "  - Created GitHub Release v${{ inputs.version }}"
