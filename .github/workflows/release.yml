@@ -15,6 +15,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -82,15 +83,37 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Update package.json version
+      - name: Create version bump PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          BRANCH="release/v${{ inputs.version }}"
+          git checkout -b "$BRANCH"
           npm version "${{ inputs.version }}" --no-git-tag-version
           git add package.json package-lock.json
           git commit -m "chore: bump version to ${{ inputs.version }}"
-          git push
+          git push -u origin "$BRANCH"
+          gh pr create \
+            --title "chore: release v${{ inputs.version }}" \
+            --body "Automated version bump for release v${{ inputs.version }}" \
+            --base main \
+            --head "$BRANCH"
+
+      - name: Wait for CI and merge PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH="release/v${{ inputs.version }}"
+          echo "Waiting for CI checks to complete..."
+          gh pr checks "$BRANCH" --watch --fail-level all
+          echo "CI passed, merging PR..."
+          gh pr merge "$BRANCH" --rebase --delete-branch
 
       - name: Create and push tag
         run: |
+          git fetch origin main
+          git checkout main
+          git pull origin main
           git tag "v${{ inputs.version }}"
           git push origin "v${{ inputs.version }}"
 
