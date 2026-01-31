@@ -65,7 +65,11 @@
 
             cat > $out/bin/unit-tests << EOF
             #!/usr/bin/env bash
-            cd $out/lib
+            set -euo pipefail
+            WORK=\$(mktemp -d)
+            trap "rm -rf \$WORK" EXIT
+            cp -r $out/lib/* "\$WORK/"
+            cd "\$WORK"
             exec ${pkgs.nodejs}/bin/npx vitest run "\$@"
             EOF
             chmod +x $out/bin/unit-tests
