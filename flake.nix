@@ -44,10 +44,27 @@
             mainProgram = "mcp-merge-guard";
           };
         };
+
+        unit-tests = pkgs.buildNpmPackage {
+          pname = "mcp-merge-guard-tests";
+          inherit version;
+          src = ./.;
+          npmDepsHash = "sha256-uj3T4nBdxpau4bDm0yh44fOabc/jViz2dv7jbgETUdM=";
+
+          buildPhase = ''
+            npm run build
+            npm test
+          '';
+
+          installPhase = ''
+            mkdir -p $out
+            touch $out/tests-passed
+          '';
+        };
       in {
         packages = {
           default = mcp-merge-guard;
-          inherit mcp-merge-guard;
+          inherit mcp-merge-guard unit-tests;
         };
 
         devShells.default = pkgs.mkShell {
