@@ -22,7 +22,7 @@ Requires [gh CLI](https://cli.github.com/) installed and authenticated.
 
 ### With Nix (recommended)
 
-Add to Claude Code MCP configuration:
+Add to your Claude Code settings (`~/.claude/settings.json`):
 
 ```json
 {
@@ -35,6 +35,8 @@ Add to Claude Code MCP configuration:
 }
 ```
 
+Or use `/settings` in Claude Code to add the MCP server through the UI.
+
 ### From source
 
 ```bash
@@ -43,16 +45,20 @@ cd mcp-merge-guard
 npm install && npm run build
 ```
 
+Add to `~/.claude/settings.json` (use absolute path):
+
 ```json
 {
   "mcpServers": {
     "merge-guard": {
       "command": "node",
-      "args": ["/path/to/mcp-merge-guard/dist/index.js"]
+      "args": ["/absolute/path/to/mcp-merge-guard/dist/index.js"]
     }
   }
 }
 ```
+
+Restart Claude Code after adding the configuration.
 
 ## Usage
 
