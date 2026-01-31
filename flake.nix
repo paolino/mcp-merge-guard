@@ -53,13 +53,23 @@
 
           buildPhase = ''
             npm run build
-            npm test
           '';
 
           installPhase = ''
-            mkdir -p $out
-            touch $out/tests-passed
+            mkdir -p $out/bin $out/lib
+            cp -r dist $out/lib/
+            cp -r node_modules $out/lib/
+            cp package.json $out/lib/
+
+            cat > $out/bin/unit-tests << EOF
+            #!/usr/bin/env bash
+            cd $out/lib
+            exec ${pkgs.nodejs}/bin/npx vitest run "\$@"
+            EOF
+            chmod +x $out/bin/unit-tests
           '';
+
+          meta.mainProgram = "unit-tests";
         };
       in {
         packages = {
