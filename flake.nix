@@ -57,10 +57,11 @@
 
           installPhase = ''
             mkdir -p $out/bin $out/lib
-            cp -r dist $out/lib/
+            cp -r src $out/lib/
             cp -r test $out/lib/
             cp -r node_modules $out/lib/
             cp package.json $out/lib/
+            cp tsconfig.json $out/lib/
             cp vitest.config.ts $out/lib/
 
             cat > $out/bin/unit-tests << EOF
@@ -69,6 +70,7 @@
             WORK=\$(mktemp -d)
             trap "rm -rf \$WORK" EXIT
             cp -r $out/lib/* "\$WORK/"
+            chmod -R u+w "\$WORK"
             cd "\$WORK"
             exec ${pkgs.nodejs}/bin/npx vitest run "\$@"
             EOF
