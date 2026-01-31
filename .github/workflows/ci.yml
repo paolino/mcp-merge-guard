@@ -21,8 +21,8 @@ jobs:
         with:
           cachix-auth-token: "${{ secrets.CACHIX_AUTH_TOKEN }}"
 
-      - name: Build
+      - name: Build (Nix)
         run: nix build --quiet
 
       - name: Test
-        run: nix develop --quiet -c npm test
+        run: nix develop --quiet -c bash -c "npm ci && npm test"
