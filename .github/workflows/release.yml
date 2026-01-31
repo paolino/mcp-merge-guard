@@ -105,7 +105,7 @@ jobs:
         run: |
           BRANCH="release/v${{ inputs.version }}"
           echo "Waiting for CI checks to complete..."
-          gh pr checks "$BRANCH" --watch --fail-level all
+          gh pr checks "$BRANCH" --watch
           echo "CI passed, merging PR..."
           gh pr merge "$BRANCH" --rebase --delete-branch
 
