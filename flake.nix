@@ -58,8 +58,10 @@
           installPhase = ''
             mkdir -p $out/bin $out/lib
             cp -r dist $out/lib/
+            cp -r test $out/lib/
             cp -r node_modules $out/lib/
             cp package.json $out/lib/
+            cp vitest.config.ts $out/lib/
 
             cat > $out/bin/unit-tests << EOF
             #!/usr/bin/env bash
