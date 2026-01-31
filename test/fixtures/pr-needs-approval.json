@@ -1,0 +1,22 @@
+{
+  "prInfo": {
+    "number": 46,
+    "title": "feat: awaiting review",
+    "state": "OPEN",
+    "isDraft": false,
+    "mergeable": "MERGEABLE",
+    "mergeStateStatus": "BLOCKED",
+    "reviewDecision": "REVIEW_REQUIRED",
+    "baseRefName": "main",
+    "headRefName": "feat/needs-review",
+    "headRefOid": "mno345"
+  },
+  "checks": [
+    {
+      "name": "CI / Build",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS"
+    }
+  ],
+  "statuses": []
+}

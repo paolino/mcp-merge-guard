@@ -1,0 +1,22 @@
+{
+  "prInfo": {
+    "number": 47,
+    "title": "feat: outdated branch",
+    "state": "OPEN",
+    "isDraft": false,
+    "mergeable": "MERGEABLE",
+    "mergeStateStatus": "BEHIND",
+    "reviewDecision": "APPROVED",
+    "baseRefName": "main",
+    "headRefName": "feat/outdated",
+    "headRefOid": "pqr678"
+  },
+  "checks": [
+    {
+      "name": "CI / Build",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS"
+    }
+  ],
+  "statuses": []
+}

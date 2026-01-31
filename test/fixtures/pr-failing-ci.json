@@ -1,0 +1,27 @@
+{
+  "prInfo": {
+    "number": 43,
+    "title": "fix: broken feature",
+    "state": "OPEN",
+    "isDraft": false,
+    "mergeable": "MERGEABLE",
+    "mergeStateStatus": "UNSTABLE",
+    "reviewDecision": "APPROVED",
+    "baseRefName": "main",
+    "headRefName": "fix/broken",
+    "headRefOid": "def456"
+  },
+  "checks": [
+    {
+      "name": "CI / Build",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS"
+    },
+    {
+      "name": "CI / Test",
+      "status": "COMPLETED",
+      "conclusion": "FAILURE"
+    }
+  ],
+  "statuses": []
+}

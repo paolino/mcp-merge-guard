@@ -1,0 +1,31 @@
+site_name: mcp-merge-guard
+site_url: https://paolino.github.io/mcp-merge-guard/
+repo_url: https://github.com/paolino/mcp-merge-guard
+
+theme:
+  name: material
+  palette:
+    scheme: slate
+  features:
+    - navigation.indexes
+    - navigation.sections
+    - content.code.copy
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - tables
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Tools: tools.md
+  - Configuration: configuration.md

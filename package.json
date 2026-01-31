@@ -1,0 +1,36 @@
+{
+  "name": "mcp-merge-guard",
+  "version": "0.1.0",
+  "description": "MCP server that guards PR merge decisions by validating CI, approvals, conflicts, and branch freshness",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "mcp-merge-guard": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src test",
+    "format": "prettier --write 'src/**/*.ts' 'test/**/*.ts'"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "eslint": "^9.0.0",
+    "prettier": "^3.3.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/paolino/mcp-merge-guard"
+  }
+}

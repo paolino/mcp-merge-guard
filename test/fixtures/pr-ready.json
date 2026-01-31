@@ -1,0 +1,27 @@
+{
+  "prInfo": {
+    "number": 42,
+    "title": "feat: add new feature",
+    "state": "OPEN",
+    "isDraft": false,
+    "mergeable": "MERGEABLE",
+    "mergeStateStatus": "CLEAN",
+    "reviewDecision": "APPROVED",
+    "baseRefName": "main",
+    "headRefName": "feat/new-feature",
+    "headRefOid": "abc123"
+  },
+  "checks": [
+    {
+      "name": "CI / Build",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS"
+    },
+    {
+      "name": "CI / Test",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS"
+    }
+  ],
+  "statuses": []
+}

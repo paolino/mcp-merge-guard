@@ -1,0 +1,22 @@
+{
+  "prInfo": {
+    "number": 45,
+    "title": "feat: conflicting changes",
+    "state": "OPEN",
+    "isDraft": false,
+    "mergeable": "CONFLICTING",
+    "mergeStateStatus": "DIRTY",
+    "reviewDecision": "APPROVED",
+    "baseRefName": "main",
+    "headRefName": "feat/conflicts",
+    "headRefOid": "jkl012"
+  },
+  "checks": [
+    {
+      "name": "CI / Build",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS"
+    }
+  ],
+  "statuses": []
+}

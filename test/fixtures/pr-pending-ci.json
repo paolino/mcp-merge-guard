@@ -1,0 +1,27 @@
+{
+  "prInfo": {
+    "number": 44,
+    "title": "feat: work in progress",
+    "state": "OPEN",
+    "isDraft": false,
+    "mergeable": "MERGEABLE",
+    "mergeStateStatus": "CLEAN",
+    "reviewDecision": "APPROVED",
+    "baseRefName": "main",
+    "headRefName": "feat/wip",
+    "headRefOid": "ghi789"
+  },
+  "checks": [
+    {
+      "name": "CI / Build",
+      "status": "IN_PROGRESS",
+      "conclusion": null
+    },
+    {
+      "name": "CI / Test",
+      "status": "QUEUED",
+      "conclusion": null
+    }
+  ],
+  "statuses": []
+}
