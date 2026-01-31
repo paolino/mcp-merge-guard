@@ -44,11 +44,16 @@
             mainProgram = "mcp-merge-guard";
           };
         };
+        docker-image = import ./nix/docker-image.nix {
+          inherit pkgs mcp-merge-guard version;
+        };
       in {
         packages = {
           default = mcp-merge-guard;
-          mcp-merge-guard = mcp-merge-guard;
+          inherit mcp-merge-guard docker-image;
         };
+
+        inherit version;
 
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [

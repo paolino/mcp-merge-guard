@@ -50,3 +50,22 @@ docs-build:
 # Clean build artifacts
 clean:
     rm -rf dist node_modules
+
+# Build Docker image via Nix
+build-docker tag='latest':
+    #!/usr/bin/env bash
+    set -euo pipefail
+    nix build .#docker-image
+    docker load < result
+    system=$(nix eval --raw --impure --expr 'builtins.currentSystem')
+    version=$(nix eval --raw ".#version.$system")
+    docker tag "ghcr.io/paolino/mcp-merge-guard:$version" \
+        "ghcr.io/paolino/mcp-merge-guard:{{ tag }}"
+
+# Trigger a release (requires gh CLI)
+release version dry_run="false":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    gh workflow run release.yml \
+        -f version={{ version }} \
+        -f dry_run={{ dry_run }}
