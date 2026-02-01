@@ -1,9 +1,8 @@
 name: Update npm hash
 
 on:
-  push:
-    branches:
-      - 'release-please--**'
+  pull_request_target:
+    branches: [main]
     paths:
       - package-lock.json
 
@@ -12,37 +11,27 @@ permissions:
 
 jobs:
   update-hash:
+    if: startsWith(github.head_ref, 'release-please--')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - uses: paolino/dev-assets/setup-nix@v0.0.1
         with:
-          cachix-auth-token: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+          ref: ${{ github.head_ref }}
 
-      - name: Compute new npm hash
+      - uses: cachix/install-nix-action@v27
+
+      - name: Compute npm hash
         id: hash
         run: |
-          # Build with current hash - if it fails, extract the correct one
-          set +e
-          OUTPUT=$(nix build .#default 2>&1)
-          EXIT_CODE=$?
-          set -e
-
-          if [ $EXIT_CODE -eq 0 ]; then
-            echo "Build succeeded, hash is correct"
-            echo "changed=false" >> "$GITHUB_OUTPUT"
+          NEW_HASH=$(nix-shell -p prefetch-npm-deps --run "prefetch-npm-deps package-lock.json 2>/dev/null")
+          OLD_HASH=$(grep -oP 'npmDepsHash = "\K[^"]+' flake.nix | head -1)
+          echo "old=$OLD_HASH"
+          echo "new=$NEW_HASH"
+          if [ "$NEW_HASH" != "$OLD_HASH" ]; then
+            echo "hash=$NEW_HASH" >> "$GITHUB_OUTPUT"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
           else
-            NEW_HASH=$(echo "$OUTPUT" | grep "got:" | awk '{print $2}')
-            if [ -n "$NEW_HASH" ]; then
-              echo "New hash: $NEW_HASH"
-              echo "hash=$NEW_HASH" >> "$GITHUB_OUTPUT"
-              echo "changed=true" >> "$GITHUB_OUTPUT"
-            else
-              echo "Build failed but couldn't extract hash"
-              echo "$OUTPUT"
-              exit 1
-            fi
+            echo "changed=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Update flake.nix
