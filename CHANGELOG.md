@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.3.0](https://github.com/paolino/mcp-merge-guard/compare/mcp-merge-guard-v0.2.0...mcp-merge-guard-v0.3.0) (2026-02-01)
+
+
+### Features
+
+* auto-update npmDepsHash in release PRs ([c6d2373](https://github.com/paolino/mcp-merge-guard/commit/c6d23732d0e622d65d05687ce1f354dbc802cf87))
+
+
+### Bug Fixes
+
+* add explicit event types to workflow ([4146be5](https://github.com/paolino/mcp-merge-guard/commit/4146be5aefc42dd1bfc7cf6435c0d92ffb0d8c01))
+* correct branch pattern for release-please PR ([5474df9](https://github.com/paolino/mcp-merge-guard/commit/5474df97964e4c4e1f8d7df74b7ff848e70abcd9))
+* remove paths filter from workflow ([7653518](https://github.com/paolino/mcp-merge-guard/commit/7653518b78b630c9a3cd5d1e879cddaaf1270155))
+* use nix shell flakes syntax ([36e79bf](https://github.com/paolino/mcp-merge-guard/commit/36e79bff6cf466ba815dbe5aad55fe1a05e33f95))
+* use prefetch-npm-deps and pull_request_target ([00ec4c9](https://github.com/paolino/mcp-merge-guard/commit/00ec4c9cf65b4c20676d88fb6abd5592687dcd4b))
+* use workflow_run trigger instead of pull_request_target ([3101e09](https://github.com/paolino/mcp-merge-guard/commit/3101e099afcebb7afb2d6a510170f4014c2f1e52))
+
 ## [0.2.0](https://github.com/paolino/mcp-merge-guard/compare/mcp-merge-guard-v0.1.0...mcp-merge-guard-v0.2.0) (2026-02-01)
 
 
