@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/paolino/mcp-merge-guard/compare/v0.4.0...v0.4.1) (2026-02-01)
+
+
+### Bug Fixes
+
+* handle empty string reviewDecision as no review required ([c9752f9](https://github.com/paolino/mcp-merge-guard/commit/c9752f95c7039de489c02e8973a3b88333ac8c87))
+
 ## [0.4.0](https://github.com/paolino/mcp-merge-guard/compare/v0.3.0...v0.4.0) (2026-02-01)
 
 
