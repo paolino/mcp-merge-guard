@@ -19,7 +19,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          PR=$(gh pr list --repo ${{ github.repository }} --head release-please --json number,headRefName --jq '.[0]')
+          PR=$(gh pr list --repo ${{ github.repository }} --json number,headRefName --jq '[.[] | select(.headRefName | startswith("release-please--"))][0]')
           if [ -z "$PR" ] || [ "$PR" = "null" ]; then
             echo "No release-please PR found"
             echo "found=false" >> "$GITHUB_OUTPUT"
