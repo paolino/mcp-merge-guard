@@ -1,0 +1,60 @@
+name: Update npm hash
+
+on:
+  push:
+    branches:
+      - 'release-please--**'
+    paths:
+      - package-lock.json
+
+permissions:
+  contents: write
+
+jobs:
+  update-hash:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: paolino/dev-assets/setup-nix@v0.0.1
+        with:
+          cachix-auth-token: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+
+      - name: Compute new npm hash
+        id: hash
+        run: |
+          # Build with current hash - if it fails, extract the correct one
+          set +e
+          OUTPUT=$(nix build .#default 2>&1)
+          EXIT_CODE=$?
+          set -e
+
+          if [ $EXIT_CODE -eq 0 ]; then
+            echo "Build succeeded, hash is correct"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            NEW_HASH=$(echo "$OUTPUT" | grep "got:" | awk '{print $2}')
+            if [ -n "$NEW_HASH" ]; then
+              echo "New hash: $NEW_HASH"
+              echo "hash=$NEW_HASH" >> "$GITHUB_OUTPUT"
+              echo "changed=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "Build failed but couldn't extract hash"
+              echo "$OUTPUT"
+              exit 1
+            fi
+          fi
+
+      - name: Update flake.nix
+        if: steps.hash.outputs.changed == 'true'
+        run: |
+          sed -i "s|npmDepsHash = \"sha256-[^\"]*\"|npmDepsHash = \"${{ steps.hash.outputs.hash }}\"|g" flake.nix
+
+      - name: Commit and push
+        if: steps.hash.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add flake.nix
+          git commit -m "fix: update npmDepsHash for release"
+          git push
