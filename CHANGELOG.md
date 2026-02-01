@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/paolino/mcp-merge-guard/compare/mcp-merge-guard-v0.2.0...mcp-merge-guard-v0.3.0) (2026-02-01)
+
+
+### Features
+
+* auto-update npmDepsHash in release PRs ([c6d2373](https://github.com/paolino/mcp-merge-guard/commit/c6d23732d0e622d65d05687ce1f354dbc802cf87))
+
 ## [0.2.0](https://github.com/paolino/mcp-merge-guard/compare/mcp-merge-guard-v0.1.0...mcp-merge-guard-v0.2.0) (2026-02-01)
 
 
