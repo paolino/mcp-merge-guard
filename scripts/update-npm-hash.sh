@@ -3,7 +3,7 @@ set -euo pipefail
 
 # Compute npm dependencies hash and update flake.nix if changed
 
-NEW_HASH=$(nix-shell -p prefetch-npm-deps --run "prefetch-npm-deps package-lock.json 2>/dev/null")
+NEW_HASH=$(nix shell nixpkgs#prefetch-npm-deps --command prefetch-npm-deps package-lock.json 2>/dev/null)
 OLD_HASH=$(grep -oP 'npmDepsHash = "\K[^"]+' flake.nix | head -1)
 
 echo "Old hash: $OLD_HASH"
