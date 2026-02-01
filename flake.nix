@@ -18,7 +18,7 @@
           pname = "mcp-merge-guard";
           inherit version;
           src = ./.;
-          npmDepsHash = "sha256-/pLTdKoXClSGoAbzsbHcy2JvpDzfj5tDMG5d6WJ2OdA=";
+          npmDepsHash = "sha256-0vn3hSGFmeY/2oZKVEloVz8fFnsgxjmfS33+3p0NQ40=";
 
           buildPhase = ''
             npm run build
@@ -50,7 +50,7 @@
           pname = "mcp-merge-guard-test-build";
           inherit version;
           src = ./.;
-          npmDepsHash = "sha256-/pLTdKoXClSGoAbzsbHcy2JvpDzfj5tDMG5d6WJ2OdA=";
+          npmDepsHash = "sha256-0vn3hSGFmeY/2oZKVEloVz8fFnsgxjmfS33+3p0NQ40=";
 
           buildPhase = ''
             npm run build
