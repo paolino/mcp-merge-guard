@@ -15,7 +15,12 @@ export interface PrInfo {
     | "HAS_HOOKS"
     | "UNKNOWN"
     | "UNSTABLE";
-  reviewDecision: "APPROVED" | "CHANGES_REQUESTED" | "REVIEW_REQUIRED" | null;
+  reviewDecision:
+    | "APPROVED"
+    | "CHANGES_REQUESTED"
+    | "REVIEW_REQUIRED"
+    | ""
+    | null;
   baseRefName: string;
   headRefName: string;
   headRefOid: string;
