@@ -16,12 +16,12 @@ export function checkApproval(prInfo: PrInfo): GuardResult {
     };
   }
 
-  if (reviewDecision === null) {
+  if (reviewDecision === null || reviewDecision === "") {
     return {
       name: "approval",
       passed: true,
       message: "No review required",
-      details: { reviewDecision: null },
+      details: { reviewDecision: reviewDecision || null },
     };
   }
 

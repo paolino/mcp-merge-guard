@@ -25,8 +25,20 @@ describe("checkApproval", () => {
     expect(result.message).toBe("PR is approved");
   });
 
-  it("passes when no review is required", () => {
+  it("passes when no review is required (null)", () => {
     const prInfo: PrInfo = { ...basePrInfo, reviewDecision: null };
+
+    const result = checkApproval(prInfo);
+
+    expect(result.passed).toBe(true);
+    expect(result.message).toBe("No review required");
+  });
+
+  it("passes when no review is required (empty string)", () => {
+    const prInfo: PrInfo = {
+      ...basePrInfo,
+      reviewDecision: "",
+    };
 
     const result = checkApproval(prInfo);
 
