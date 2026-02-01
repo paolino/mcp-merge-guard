@@ -1,56 +1,29 @@
 name: Release
 
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Version to release (e.g., 1.2.0)'
-        required: true
-        type: string
-      dry_run:
-        description: 'Dry run (skip actual release)'
-        required: false
-        default: false
-        type: boolean
+  push:
+    branches: [main]
 
 permissions:
   contents: write
   pull-requests: write
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  validate:
+  release-please:
     runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: googleapis/release-please-action@v4
+        id: release
         with:
-          fetch-depth: 0
+          release-type: node
 
-      - name: Validate version format
-        run: |
-          VERSION="${{ inputs.version }}"
-          if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
-            echo "Invalid version format: $VERSION"
-            echo "Expected format: MAJOR.MINOR.PATCH (e.g., 1.2.0)"
-            exit 1
-          fi
-          echo "Version format valid: $VERSION"
-
-      - name: Check tag doesn't exist
-        run: |
-          VERSION="${{ inputs.version }}"
-          if git rev-parse "v$VERSION" >/dev/null 2>&1; then
-            echo "Tag v$VERSION already exists!"
-            exit 1
-          fi
-          echo "Tag v$VERSION is available"
-
-  test:
+  publish:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created }}
     runs-on: ubuntu-latest
-    needs: validate
     steps:
       - uses: actions/checkout@v4
 
@@ -64,85 +37,6 @@ jobs:
       - name: Test
         run: nix run .#unit-tests --quiet
 
-  release:
-    runs-on: ubuntu-latest
-    needs: test
-    if: ${{ !inputs.dry_run }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: paolino/dev-assets/setup-nix@v0.0.1
-        with:
-          cachix-auth-token: "${{ secrets.CACHIX_AUTH_TOKEN }}"
-
-      - name: Configure git
+      - name: Release published
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Create version bump PR
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          BRANCH="release/v${{ inputs.version }}"
-          git checkout -b "$BRANCH"
-          npm version "${{ inputs.version }}" --no-git-tag-version
-          git add package.json package-lock.json
-          git commit -m "chore: bump version to ${{ inputs.version }}"
-          git push -u origin "$BRANCH"
-          gh pr create \
-            --title "chore: release v${{ inputs.version }}" \
-            --body "Automated version bump for release v${{ inputs.version }}" \
-            --base main \
-            --head "$BRANCH"
-
-      - name: Wait for CI and merge PR
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          BRANCH="release/v${{ inputs.version }}"
-          echo "Waiting for CI checks to be registered..."
-          for i in {1..30}; do
-            if gh pr checks "$BRANCH" 2>/dev/null | grep -q "build-and-test"; then
-              echo "Checks registered, watching for completion..."
-              break
-            fi
-            echo "Waiting for checks... (attempt $i/30)"
-            sleep 10
-          done
-          gh pr checks "$BRANCH" --watch
-          echo "CI passed, merging PR..."
-          gh pr merge "$BRANCH" --rebase --delete-branch
-
-      - name: Create and push tag
-        run: |
-          git fetch origin main
-          git checkout main
-          git pull origin main
-          git tag "v${{ inputs.version }}"
-          git push origin "v${{ inputs.version }}"
-
-      - name: Create GitHub Release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release create "v${{ inputs.version }}" \
-            --title "v${{ inputs.version }}" \
-            --generate-notes
-
-  dry-run-summary:
-    runs-on: ubuntu-latest
-    needs: test
-    if: ${{ inputs.dry_run }}
-    steps:
-      - name: Dry run summary
-        run: |
-          echo "Dry run completed successfully!"
-          echo ""
-          echo "Would have:"
-          echo "  - Updated package.json version to ${{ inputs.version }}"
-          echo "  - Created tag v${{ inputs.version }}"
-          echo "  - Created GitHub Release v${{ inputs.version }}"
+          echo "Released ${{ needs.release-please.outputs.tag_name }}"
