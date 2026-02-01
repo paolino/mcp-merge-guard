@@ -1,6 +1,6 @@
 {
   "name": "mcp-merge-guard",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "MCP server that guards PR merge decisions by validating CI, approvals, conflicts, and branch freshness",
   "type": "module",
   "main": "dist/index.js",
