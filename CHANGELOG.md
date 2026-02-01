@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.0](https://github.com/paolino/mcp-merge-guard/compare/mcp-merge-guard-v0.2.0...mcp-merge-guard-v0.3.0) (2026-02-01)
+
+
+### Features
+
+* auto-update npmDepsHash in release PRs ([c6d2373](https://github.com/paolino/mcp-merge-guard/commit/c6d23732d0e622d65d05687ce1f354dbc802cf87))
+
+
+### Bug Fixes
+
+* add explicit event types to workflow ([4146be5](https://github.com/paolino/mcp-merge-guard/commit/4146be5aefc42dd1bfc7cf6435c0d92ffb0d8c01))
+* use prefetch-npm-deps and pull_request_target ([00ec4c9](https://github.com/paolino/mcp-merge-guard/commit/00ec4c9cf65b4c20676d88fb6abd5592687dcd4b))
+
 ## [0.2.0](https://github.com/paolino/mcp-merge-guard/compare/mcp-merge-guard-v0.1.0...mcp-merge-guard-v0.2.0) (2026-02-01)
 
 
