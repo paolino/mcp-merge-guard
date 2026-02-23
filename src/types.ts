@@ -38,6 +38,7 @@ export interface MergeResult {
   merged: boolean;
   sha?: string;
   error?: string;
+  localSync?: string;
   report: GuardsReport;
 }
 
