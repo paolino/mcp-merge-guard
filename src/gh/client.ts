@@ -114,6 +114,35 @@ async function ghExecRaw(args: string[]): Promise<string> {
 }
 
 /**
+ * Repo merge method settings from GitHub API
+ */
+export interface RepoMergeSettings {
+  allowMergeCommit: boolean;
+  allowSquashMerge: boolean;
+  allowRebaseMerge: boolean;
+}
+
+/**
+ * Get which merge methods the repo allows
+ */
+export async function getRepoMergeSettings(
+  owner: string,
+  repo: string
+): Promise<RepoMergeSettings> {
+  const response = await ghExec<{
+    allow_merge_commit: boolean;
+    allow_squash_merge: boolean;
+    allow_rebase_merge: boolean;
+  }>(["api", `repos/${owner}/${repo}`, "--jq", `{allow_merge_commit, allow_squash_merge, allow_rebase_merge}`]);
+
+  return {
+    allowMergeCommit: response.allow_merge_commit,
+    allowSquashMerge: response.allow_squash_merge,
+    allowRebaseMerge: response.allow_rebase_merge,
+  };
+}
+
+/**
  * Get PR information
  */
 export async function getPrInfo(
@@ -208,8 +237,12 @@ export async function mergePr(
   prNumber: number,
   method: MergeMethod = "rebase"
 ): Promise<MergeResponse> {
-  const methodFlag =
-    method === "rebase" ? "--rebase" : method === "squash" ? "--squash" : "";
+  const methodFlags: Record<MergeMethod, string> = {
+    rebase: "--rebase",
+    squash: "--squash",
+    merge: "--merge",
+  };
+  const methodFlag = methodFlags[method];
 
   try {
     await ghExecRaw([
@@ -219,7 +252,7 @@ export async function mergePr(
       "--repo",
       `${owner}/${repo}`,
       methodFlag,
-    ].filter(Boolean));
+    ]);
 
     const prInfo = await getPrInfo(owner, repo, prNumber);
 

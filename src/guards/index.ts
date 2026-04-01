@@ -9,6 +9,7 @@ export { checkCiStatus } from "./ci-status.js";
 export { checkApproval } from "./approval.js";
 export { checkConflicts } from "./conflicts.js";
 export { checkUpToDate } from "./up-to-date.js";
+export { checkMergeMethod } from "./merge-method.js";
 
 interface RunGuardsInput {
   prInfo: PrInfo;

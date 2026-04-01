@@ -2,9 +2,10 @@ import { z } from "zod";
 import { exec } from "node:child_process";
 import { promisify } from "node:util";
 import type { MergeResult, GuardOptions, MergeMethod } from "../types.js";
-import { getPrInfo, getPrChecks, mergePr } from "../gh/client.js";
+import { getPrInfo, getPrChecks, getRepoMergeSettings, mergePr } from "../gh/client.js";
 import { GhMergeError } from "../gh/errors.js";
 import { runGuards } from "../guards/index.js";
+import { checkMergeMethod } from "../guards/merge-method.js";
 
 const execAsync = promisify(exec);
 
@@ -66,13 +67,21 @@ export async function guardMerge(input: GuardMergeInput): Promise<MergeResult> {
   const { owner, repo, prNumber, requireUpToDate, mergeMethod, localRepoPath } =
     input;
 
-  const [prInfo, { checks, statuses }] = await Promise.all([
+  const [prInfo, { checks, statuses }, repoSettings] = await Promise.all([
     getPrInfo(owner, repo, prNumber),
     getPrChecks(owner, repo, prNumber),
+    getRepoMergeSettings(owner, repo),
   ]);
 
   const options: GuardOptions = { requireUpToDate };
   const report = runGuards({ prInfo, checks, statuses, options });
+
+  // Add merge-method guard result
+  const mergeMethodGuard = checkMergeMethod(mergeMethod as MergeMethod, repoSettings);
+  report.guards.push(mergeMethodGuard);
+  if (!mergeMethodGuard.passed) {
+    report.allPassed = false;
+  }
 
   if (!report.allPassed) {
     const failedGuards = report.guards
