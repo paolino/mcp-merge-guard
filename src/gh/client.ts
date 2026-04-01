@@ -1,4 +1,4 @@
-import { exec } from "node:child_process";
+import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import type { MergeMethod } from "../types.js";
 import {
@@ -10,17 +10,15 @@ import {
 } from "./errors.js";
 import type { PrInfo, CheckRun, StatusCheck, MergeResponse } from "./types.js";
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 const TIMEOUT_MS = 30000;
 
 /**
  * Execute a gh CLI command and return parsed JSON output
  */
 async function ghExec<T>(args: string[]): Promise<T> {
-  const command = `gh ${args.join(" ")}`;
-
   try {
-    const { stdout, stderr } = await execAsync(command, {
+    const { stdout, stderr } = await execFileAsync("gh", args, {
       timeout: TIMEOUT_MS,
       encoding: "utf-8",
     });
@@ -67,10 +65,8 @@ async function ghExec<T>(args: string[]): Promise<T> {
  * Execute a gh CLI command without JSON output
  */
 async function ghExecRaw(args: string[]): Promise<string> {
-  const command = `gh ${args.join(" ")}`;
-
   try {
-    const { stdout, stderr } = await execAsync(command, {
+    const { stdout, stderr } = await execFileAsync("gh", args, {
       timeout: TIMEOUT_MS,
       encoding: "utf-8",
     });
