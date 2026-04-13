@@ -6,12 +6,12 @@ Query-only tool that checks if a PR is ready to merge by running all guards.
 
 ### Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `owner` | string | yes | - | Repository owner |
-| `repo` | string | yes | - | Repository name |
-| `prNumber` | number | yes | - | Pull request number |
-| `requireUpToDate` | boolean | no | false | Require branch to be up to date |
+| Parameter         | Type    | Required | Default | Description                     |
+| ----------------- | ------- | -------- | ------- | ------------------------------- |
+| `owner`           | string  | yes      | -       | Repository owner                |
+| `repo`            | string  | yes      | -       | Repository name                 |
+| `prNumber`        | number  | yes      | -       | Pull request number             |
+| `requireUpToDate` | boolean | no       | false   | Require branch to be up to date |
 
 ### Response
 
@@ -50,17 +50,18 @@ Query-only tool that checks if a PR is ready to merge by running all guards.
 Atomic tool that validates all guards and merges the PR only if all pass.
 
 !!! warning "No bypass"
-    This tool has no force flag by design. If guards fail, the merge is refused.
+This tool has no force flag by design. If guards fail, the merge is refused.
 
 ### Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `owner` | string | yes | - | Repository owner |
-| `repo` | string | yes | - | Repository name |
-| `prNumber` | number | yes | - | Pull request number |
-| `requireUpToDate` | boolean | no | false | Require branch to be up to date |
-| `mergeMethod` | string | no | "rebase" | Merge method: "merge", "squash", or "rebase" |
+| Parameter         | Type    | Required | Default  | Description                                                                  |
+| ----------------- | ------- | -------- | -------- | ---------------------------------------------------------------------------- |
+| `owner`           | string  | yes      | -        | Repository owner                                                             |
+| `repo`            | string  | yes      | -        | Repository name                                                              |
+| `prNumber`        | number  | yes      | -        | Pull request number                                                          |
+| `requireUpToDate` | boolean | no       | false    | Require branch to be up to date                                              |
+| `mergeMethod`     | string  | no       | "rebase" | Merge method: "merge", "squash", or "rebase"                                 |
+| `localRepoPath`   | string  | no       | -        | Local repo path whose base branch should be updated after a successful merge |
 
 ### Successful Response
 
@@ -71,6 +72,7 @@ Atomic tool that validates all guards and merges the PR only if all pass.
   "prNumber": 42,
   "merged": true,
   "sha": "abc123def456",
+  "localSync": "Local main updated at /code/my-project",
   "report": {
     "allPassed": true,
     "guards": [...],
@@ -78,6 +80,11 @@ Atomic tool that validates all guards and merges the PR only if all pass.
   }
 }
 ```
+
+When `localRepoPath` is provided, `guard-merge` fetches the merged base branch
+from GitHub over HTTPS using the authenticated `gh` session, then fast-forwards
+the local base branch itself. This avoids depending on an SSH `origin` remote
+and avoids rebasing whichever branch happened to be checked out.
 
 ### Failed Response (Guards)
 
