@@ -1,13 +1,15 @@
 import { z } from "zod";
-import { exec } from "node:child_process";
-import { promisify } from "node:util";
 import type { MergeResult, GuardOptions, MergeMethod } from "../types.js";
-import { getPrInfo, getPrChecks, getRepoMergeSettings, mergePr } from "../gh/client.js";
+import {
+  getPrInfo,
+  getPrChecks,
+  getRepoMergeSettings,
+  mergePr,
+} from "../gh/client.js";
 import { GhMergeError } from "../gh/errors.js";
 import { runGuards } from "../guards/index.js";
 import { checkMergeMethod } from "../guards/merge-method.js";
-
-const execAsync = promisify(exec);
+import { syncLocalBaseBranch } from "./local-sync.js";
 
 export const guardMergeSchema = z.object({
   owner: z.string().describe("Repository owner (user or organization)"),
@@ -27,37 +29,12 @@ export const guardMergeSchema = z.object({
     .string()
     .optional()
     .describe(
-      "Local repo path to update after merge. " +
-        "Runs git fetch + rebase on the base branch."
+      "Local repo path whose base branch should be updated after merge. " +
+        "Fetches the merged base branch over GitHub HTTPS and fast-forwards the local base branch.",
     ),
 });
 
 export type GuardMergeInput = z.infer<typeof guardMergeSchema>;
-
-/**
- * Update the local base branch after a successful remote merge.
- * Returns a status message.
- */
-async function pullBaseBranch(
-  repoPath: string,
-  baseBranch: string
-): Promise<string> {
-  try {
-    await execAsync(
-      `git -C '${repoPath}' fetch origin ${baseBranch}`,
-      { timeout: 30000 }
-    );
-    await execAsync(
-      `git -C '${repoPath}' rebase origin/${baseBranch}`,
-      { timeout: 30000 }
-    );
-    return `Local ${baseBranch} updated`;
-  } catch (error: unknown) {
-    const msg =
-      error instanceof Error ? error.message : String(error);
-    return `Local update failed: ${msg}`;
-  }
-}
 
 /**
  * Validate guards and merge PR if all pass
@@ -77,7 +54,10 @@ export async function guardMerge(input: GuardMergeInput): Promise<MergeResult> {
   const report = runGuards({ prInfo, checks, statuses, options });
 
   // Add merge-method guard result
-  const mergeMethodGuard = checkMergeMethod(mergeMethod as MergeMethod, repoSettings);
+  const mergeMethodGuard = checkMergeMethod(
+    mergeMethod as MergeMethod,
+    repoSettings,
+  );
   report.guards.push(mergeMethodGuard);
   if (!mergeMethodGuard.passed) {
     report.allPassed = false;
@@ -103,15 +83,17 @@ export async function guardMerge(input: GuardMergeInput): Promise<MergeResult> {
       owner,
       repo,
       prNumber,
-      mergeMethod as MergeMethod
+      mergeMethod as MergeMethod,
     );
 
     // Update local repo if path provided and merge succeeded
     let localSync: string | undefined;
     if (localRepoPath && mergeResponse.merged) {
-      localSync = await pullBaseBranch(
+      localSync = await syncLocalBaseBranch(
         localRepoPath,
-        prInfo.baseRefName
+        owner,
+        repo,
+        prInfo.baseRefName,
       );
     }
 
