@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.0.0](https://github.com/paolino/mcp-merge-guard/compare/v0.4.0...v1.0.0) (2026-07-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* guard-merge's default mergeMethod changed from rebase to merge; mergeMethod=rebase now fails unless
+
+### Features
+
+* default mergeMethod to merge and gate rebase behind allowSignatureStripping ([61e44c2](https://github.com/paolino/mcp-merge-guard/commit/61e44c26dfca8720951a7875679c330c4195960b))
+* pull local base branch after merge ([5b6c1ac](https://github.com/paolino/mcp-merge-guard/commit/5b6c1acf2bc88a890a0dfc34115f12039602726f))
+
+
+### Bug Fixes
+
+* enforce repo merge method settings as a guard ([9c89f73](https://github.com/paolino/mcp-merge-guard/commit/9c89f7395b157d6a8c9b975a68585af2e10a7838))
+* handle empty string reviewDecision as no review required ([c9752f9](https://github.com/paolino/mcp-merge-guard/commit/c9752f95c7039de489c02e8973a3b88333ac8c87))
+* sync local base branch without SSH remote dependency ([3d3cc63](https://github.com/paolino/mcp-merge-guard/commit/3d3cc63d2bea29b53606c79f03adb88164bf6d98))
+* use execFile instead of exec to avoid shell splitting ([d2ebc22](https://github.com/paolino/mcp-merge-guard/commit/d2ebc22879c28b16641d884f20bc8791a1c74ca3))
+
 ## [0.4.0](https://github.com/paolino/mcp-merge-guard/compare/v0.3.0...v0.4.0) (2026-02-01)
 
 
