@@ -6,17 +6,20 @@ MCP server that guards PR merge decisions by validating CI, approvals, conflicts
 
 - **check-merge-ready** - Query-only status check that validates all guards
 - **guard-merge** - Atomic validate-then-merge that refuses if guards fail
+  - Default merge method is `merge` (preserves signed branch commits)
+  - Rebase is refused unless `allowSignatureStripping: true` is passed
   - Optional `localRepoPath` support updates the local base branch after merge
     without relying on the clone's remote protocol
 
 ## Guards
 
-| Guard      | Description                                            |
-| ---------- | ------------------------------------------------------ |
-| ci-status  | All CI checks passed, none pending or failed           |
-| approval   | PR is approved (or no review required)                 |
-| conflicts  | No merge conflicts                                     |
-| up-to-date | Branch is current with base (optional, off by default) |
+| Guard               | Description                                            |
+| ------------------- | ------------------------------------------------------ |
+| ci-status           | All CI checks passed, none pending or failed           |
+| approval            | PR is approved (or no review required)                 |
+| conflicts           | No merge conflicts                                     |
+| up-to-date          | Branch is current with base (optional, off by default) |
+| merge-method-policy | Rebase refused unless allowSignatureStripping is set   |
 
 ## Installation
 

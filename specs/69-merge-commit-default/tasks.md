@@ -2,11 +2,11 @@
 
 ## Slice 1 — flip default, add policy guard, docs
 
-- [ ] T201 `mergeMethod` default `rebase` → `merge` + schema description;
+- [X] T201 `mergeMethod` default `rebase` → `merge` + schema description;
   new `allowSignatureStripping` flag; policy guard module
   `src/guards/merge-method-policy.ts` wired into `guardMerge` and
   re-exported from `src/guards/index.ts`
-- [ ] T202 tests: `test/guards/merge-method-policy.test.ts` (4 cases) +
+- [X] T202 tests: `test/guards/merge-method-policy.test.ts` (4 cases) +
   `test/tools/guard-merge.test.ts` (schema defaults); RED observed first
-- [ ] T203 docs: `docs/tools.md` table, `docs/configuration.md`
+- [X] T203 docs: `docs/tools.md` table, `docs/configuration.md`
   merge-methods section, README Features/Guards

@@ -54,14 +54,15 @@ This tool has no force flag by design. If guards fail, the merge is refused.
 
 ### Parameters
 
-| Parameter         | Type    | Required | Default  | Description                                                                  |
-| ----------------- | ------- | -------- | -------- | ---------------------------------------------------------------------------- |
-| `owner`           | string  | yes      | -        | Repository owner                                                             |
-| `repo`            | string  | yes      | -        | Repository name                                                              |
-| `prNumber`        | number  | yes      | -        | Pull request number                                                          |
-| `requireUpToDate` | boolean | no       | false    | Require branch to be up to date                                              |
-| `mergeMethod`     | string  | no       | "rebase" | Merge method: "merge", "squash", or "rebase"                                 |
-| `localRepoPath`   | string  | no       | -        | Local repo path whose base branch should be updated after a successful merge |
+| Parameter                 | Type    | Required | Default  | Description                                                                  |
+| ------------------------- | ------- | -------- | -------- | ---------------------------------------------------------------------------- |
+| `owner`                   | string  | yes      | -        | Repository owner                                                             |
+| `repo`                    | string  | yes      | -        | Repository name                                                              |
+| `prNumber`                | number  | yes      | -        | Pull request number                                                          |
+| `requireUpToDate`         | boolean | no       | false    | Require branch to be up to date                                              |
+| `mergeMethod`             | string  | no       | "merge"  | Merge method: "merge", "squash", or "rebase"                                 |
+| `allowSignatureStripping` | boolean | no       | false    | Allow rebase merge even though it recreates commits unsigned                 |
+| `localRepoPath`           | string  | no       | -        | Local repo path whose base branch should be updated after a successful merge |
 
 ### Successful Response
 

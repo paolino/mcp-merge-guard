@@ -60,11 +60,14 @@ Enable by setting `requireUpToDate: true` in tool parameters.
 
 | Method | Description |
 |--------|-------------|
-| `rebase` | Rebase commits onto base branch (default, maintains linear history) |
-| `squash` | Squash all commits into one |
-| `merge` | Create a merge commit |
+| `merge` | Create a merge commit (default, preserves signed branch commits) |
+| `squash` | Squash all commits into one (web-flow-signed) |
+| `rebase` | Rebase commits onto base branch (refused without `allowSignatureStripping: true` — recreates commits unsigned) |
 
-The default is `rebase` to maintain linear git history.
+The default is `merge` to preserve GPG-signed branch commits on the base
+branch. `rebase` is refused by the merge-method-policy guard unless
+`allowSignatureStripping: true` is passed explicitly, because it recreates
+branch commits unsigned.
 
 ## gh CLI Authentication
 
