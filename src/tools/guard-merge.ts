@@ -9,6 +9,7 @@ import {
 import { GhMergeError } from "../gh/errors.js";
 import { runGuards } from "../guards/index.js";
 import { checkMergeMethod } from "../guards/merge-method.js";
+import { checkMergeMethodPolicy } from "../guards/merge-method-policy.js";
 import { syncLocalBaseBranch } from "./local-sync.js";
 
 export const guardMergeSchema = z.object({
@@ -23,8 +24,19 @@ export const guardMergeSchema = z.object({
   mergeMethod: z
     .enum(["merge", "squash", "rebase"])
     .optional()
-    .default("rebase")
-    .describe("Merge method to use (default: rebase)"),
+    .default("merge")
+    .describe(
+      "Merge method to use (default: merge). merge preserves signed branch commits; " +
+        "squash collapses into one web-flow-signed commit; rebase is forbidden without " +
+        "allowSignatureStripping because it recreates commits unsigned.",
+    ),
+  allowSignatureStripping: z
+    .boolean()
+    .optional()
+    .default(false)
+    .describe(
+      "Explicitly allow rebase merge even though it recreates branch commits unsigned (default: false)",
+    ),
   localRepoPath: z
     .string()
     .optional()
@@ -41,8 +53,15 @@ export type GuardMergeInput = z.infer<typeof guardMergeSchema>;
  * This is an atomic operation - merge only happens if all guards pass
  */
 export async function guardMerge(input: GuardMergeInput): Promise<MergeResult> {
-  const { owner, repo, prNumber, requireUpToDate, mergeMethod, localRepoPath } =
-    input;
+  const {
+    owner,
+    repo,
+    prNumber,
+    requireUpToDate,
+    mergeMethod,
+    allowSignatureStripping,
+    localRepoPath,
+  } = input;
 
   const [prInfo, { checks, statuses }, repoSettings] = await Promise.all([
     getPrInfo(owner, repo, prNumber),
@@ -52,6 +71,16 @@ export async function guardMerge(input: GuardMergeInput): Promise<MergeResult> {
 
   const options: GuardOptions = { requireUpToDate };
   const report = runGuards({ prInfo, checks, statuses, options });
+
+  // Add merge-method-policy guard result (before repo-settings guard)
+  const policyGuard = checkMergeMethodPolicy(
+    mergeMethod as MergeMethod,
+    allowSignatureStripping,
+  );
+  report.guards.push(policyGuard);
+  if (!policyGuard.passed) {
+    report.allPassed = false;
+  }
 
   // Add merge-method guard result
   const mergeMethodGuard = checkMergeMethod(

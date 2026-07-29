@@ -7,3 +7,5 @@ result
 coverage/
 site/
 .llm/
+gate.sh
+WIP.md
